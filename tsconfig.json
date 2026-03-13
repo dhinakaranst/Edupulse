@@ -1,0 +1,3 @@
+{
+  "extends": "@sms/config/tsconfig.base.json"
+}
