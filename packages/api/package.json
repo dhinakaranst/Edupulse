@@ -1,31 +1,31 @@
 {
-  "name": "@sms/api",
-  "type": "module",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
-  "scripts": {},
-  "dependencies": {
-    "@orpc/client": "catalog:",
-    "@orpc/openapi": "catalog:",
-    "@orpc/server": "catalog:",
-    "@orpc/zod": "catalog:",
-    "@sms/auth": "workspace:*",
-    "@sms/db": "workspace:*",
-    "@sms/env": "workspace:*",
-    "@types/pg": "catalog:",
-    "dotenv": "catalog:",
-    "drizzle-orm": "catalog:",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@sms/config": "workspace:*",
-    "hono": "catalog:",
-    "typescript": "^5"
-  }
+	"name": "@sms/api",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {},
+	"dependencies": {
+		"@orpc/client": "catalog:",
+		"@orpc/openapi": "catalog:",
+		"@orpc/server": "catalog:",
+		"@orpc/zod": "catalog:",
+		"@sms/auth": "workspace:*",
+		"@sms/db": "workspace:*",
+		"@sms/env": "workspace:*",
+		"@types/pg": "catalog:",
+		"dotenv": "catalog:",
+		"drizzle-orm": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@sms/config": "workspace:*",
+		"hono": "catalog:",
+		"typescript": "^5"
+	}
 }

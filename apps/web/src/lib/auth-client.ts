@@ -1,6 +1,13 @@
 import { env } from "@sms/env/web";
 import { createAuthClient } from "better-auth/react";
+import {
+	emailOTPClient,
+	organizationClient,
+} from "better-auth/client/plugins";
+
 
 export const authClient = createAuthClient({
-  baseURL: env.VITE_SERVER_URL,
+	baseURL: env.VITE_SERVER_URL,
+	plugins: [organizationClient(), emailOTPClient()],
 });
+
