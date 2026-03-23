@@ -1,17 +1,10 @@
-import { OpenAPIHandler } from "@orpc/openapi/fetch";
-import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
-import { onError } from "@orpc/server";
-import { RPCHandler } from "@orpc/server/fetch";
-import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
-import { createContext } from "@sms/api/context";
-import { appRouter } from "@sms/api/routers/index";
+import { api } from "@sms/api";
+import { fulfillPurchase } from "@sms/api/lib/payment-logic";
+import { auth } from "@sms/auth";
 import { env } from "@sms/env/server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import nodemailer from "nodemailer";
-import { apiRouter } from "./routes";
-
 
 const app = new Hono();
 
@@ -28,87 +21,41 @@ app.use(
 );
 
 /**
- * Central API Router
- * Mounts grouped routes: /api/auth, /api/payment, etc.
+ * 1. Better Auth Handler
+ * Route: /api/auth/*
  */
-app.route("/api", apiRouter);
+app.on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
-// oRPC API Handlers
-export const apiHandler = new OpenAPIHandler(appRouter, {
-	plugins: [
-		new OpenAPIReferencePlugin({
-			schemaConverters: [new ZodToJsonSchemaConverter()],
-		}),
-	],
-	interceptors: [
-		onError((error) => {
-			console.error(error);
-		}),
-	],
-});
-
-export const rpcHandler = new RPCHandler(appRouter, {
-	interceptors: [
-		onError((error) => {
-			console.error(error);
-		}),
-	],
-});
-
-// Main request dispatcher
-app.use("/*", async (c, next) => {
-	const context = await createContext({ context: c });
-
-	const rpcResult = await rpcHandler.handle(c.req.raw, {
-		prefix: "/rpc",
-		context: context,
-	});
-
-	if (rpcResult.matched) {
-		return c.newResponse(rpcResult.response.body, rpcResult.response);
-	}
-
-	const apiResult = await apiHandler.handle(c.req.raw, {
-		prefix: "/api-reference",
-		context: context,
-	});
-
-	if (apiResult.matched) {
-		return c.newResponse(apiResult.response.body, apiResult.response);
-	}
-
-	await next();
-});
-
-app.get("/api/test-email", async (c) => {
+/**
+ * 2. Stripe Webhook Handler (Raw HTTP)
+ * Route: /api/payment/webhook
+ */
+app.post("/api/payment/webhook", async (c) => {
+	const rawBody = await c.req.text();
 	try {
-		const transporter = nodemailer.createTransport({
-			service: "gmail",
-			auth: {
-				user: env.EMAIL_USER,
-				pass: env.EMAIL_PASSWORD,
-			},
-		});
-
-		await transporter.sendMail({
-			from: "test@example.com", // Reverted to hardcoded email
-			to: "test@example.com", // Reverted to hardcoded email
-			subject: "Test Email",
-			text: "If you see this, email is working!",
-		});
-
-		return c.json({ success: true, message: "Test email sent!" });
-	} catch (error: any) {
-		console.error("Test email failed:", error);
-		return c.json({ success: false, error: error.message }, 500);
+		const event = JSON.parse(rawBody);
+		if (event.type === "checkout.session.completed") {
+			await fulfillPurchase(event.data.object);
+		}
+		return c.json({ received: true });
+	} catch (err) {
+		const errorMessage = err instanceof Error ? err.message : String(err);
+		console.error("Webhook Error:", errorMessage);
+		return c.json({ error: `Webhook Error: ${errorMessage}` }, 400);
 	}
 });
 
-export default {
-	port: 3000,
-	hostname: "127.0.0.1",
+/**
+ * 3. Mount Business APIs (oRPC via Hono Router)
+ * Route: /api/* (handles /api/rpc, /api/onboarding, etc. but auth takes priority above)
+ */
+app.route("/api", api);
+
+// Main Entry
+const server = Bun.serve({
+	port: Number(env.PORT || 3000),
+	hostname: "0.0.0.0",
 	fetch: app.fetch,
-};
+});
 
-
-
+console.log(`Started development server: ${server.url}`);

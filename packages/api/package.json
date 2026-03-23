@@ -21,10 +21,15 @@
 		"@types/pg": "catalog:",
 		"dotenv": "catalog:",
 		"drizzle-orm": "catalog:",
+		"exceljs": "^4.4.0",
+		"nodemailer": "catalog:",
+		"stripe": "catalog:",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@sms/config": "workspace:*",
+		"@types/exceljs": "^1.3.2",
+		"@types/nodemailer": "catalog:",
 		"hono": "catalog:",
 		"typescript": "^5"
 	}

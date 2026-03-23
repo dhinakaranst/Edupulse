@@ -32,10 +32,19 @@ export default function SignInForm({
 					password: value.password,
 				},
 				{
-					onSuccess: () => {
-						navigate({
-							to: "/dashboard",
-						});
+					onSuccess: (ctx) => {
+						const hasChangedPassword = (ctx.data.user as { hasChangedPassword?: boolean })
+							.hasChangedPassword;
+
+						if (hasChangedPassword === false) {
+							navigate({
+								to: "/change-password",
+							});
+						} else {
+							navigate({
+								to: "/dashboard",
+							});
+						}
 						toast.success("Welcome back!");
 					},
 					onError: (error) => {

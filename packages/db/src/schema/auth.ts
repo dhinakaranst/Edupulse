@@ -7,6 +7,9 @@ export const institution = pgTable("institution", {
 	slug: text("slug").notNull().unique(),
 	type: text("type"), // Temporarily nullable for debugging
 	logo: text("logo"),
+	status: text("status").default("pending"), // track onboarding status
+	plan: text("plan").default("free"), // free, standard, premium
+	subscriptionId: text("subscription_id"), // stripe subscription id
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -14,12 +17,12 @@ export const institution = pgTable("institution", {
 		.notNull(),
 });
 
-
 export const user = pgTable("user", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),
 	email: text("email").notNull().unique(),
 	phoneNumber: text("phone_number"), // Added for OTP/Mobile support
+	hasChangedPassword: boolean("has_changed_password").default(true).notNull(), // Forced password change flag
 	emailVerified: boolean("email_verified").default(false).notNull(),
 	image: text("image"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -114,6 +117,31 @@ export const member = pgTable("member", {
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const team = pgTable("team", {
+	id: text("id").primaryKey(),
+	name: text("name").notNull(),
+	organizationId: text("organization_id")
+		.notNull()
+		.references(() => institution.id, { onDelete: "cascade" }),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at")
+		.defaultNow()
+		.$onUpdate(() => new Date())
+		.notNull(),
+});
+
+export const teamMember = pgTable("team_member", {
+	id: text("id").primaryKey(),
+	teamId: text("team_id")
+		.notNull()
+		.references(() => team.id, { onDelete: "cascade" }),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	role: text("role").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const userRelations = relations(user, ({ many }) => ({
 	sessions: many(session),
 	accounts: many(account),
@@ -132,4 +160,3 @@ export const accountRelations = relations(account, ({ one }) => ({
 		references: [user.id],
 	}),
 }));
-

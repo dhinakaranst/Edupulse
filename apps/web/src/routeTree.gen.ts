@@ -13,7 +13,11 @@ import { Route as SuccessRouteImport } from './routes/success'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ChangePasswordRouteImport } from './routes/change-password'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OnboardingUploadRouteImport } from './routes/onboarding/upload'
+import { Route as OnboardingSetupRouteImport } from './routes/onboarding/setup'
+import { Route as DashboardBranchBranchIdRouteImport } from './routes/dashboard.branch.$branchId'
 
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
@@ -35,48 +39,111 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChangePasswordRoute = ChangePasswordRouteImport.update({
+  id: '/change-password',
+  path: '/change-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingUploadRoute = OnboardingUploadRouteImport.update({
+  id: '/onboarding/upload',
+  path: '/onboarding/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingSetupRoute = OnboardingSetupRouteImport.update({
+  id: '/onboarding/setup',
+  path: '/onboarding/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardBranchBranchIdRoute = DashboardBranchBranchIdRouteImport.update({
+  id: '/branch/$branchId',
+  path: '/branch/$branchId',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/change-password': typeof ChangePasswordRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/success': typeof SuccessRoute
+  '/onboarding/setup': typeof OnboardingSetupRoute
+  '/onboarding/upload': typeof OnboardingUploadRoute
+  '/dashboard/branch/$branchId': typeof DashboardBranchBranchIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/change-password': typeof ChangePasswordRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/success': typeof SuccessRoute
+  '/onboarding/setup': typeof OnboardingSetupRoute
+  '/onboarding/upload': typeof OnboardingUploadRoute
+  '/dashboard/branch/$branchId': typeof DashboardBranchBranchIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/change-password': typeof ChangePasswordRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/success': typeof SuccessRoute
+  '/onboarding/setup': typeof OnboardingSetupRoute
+  '/onboarding/upload': typeof OnboardingUploadRoute
+  '/dashboard/branch/$branchId': typeof DashboardBranchBranchIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/pricing' | '/success'
+  fullPaths:
+    | '/'
+    | '/change-password'
+    | '/dashboard'
+    | '/login'
+    | '/pricing'
+    | '/success'
+    | '/onboarding/setup'
+    | '/onboarding/upload'
+    | '/dashboard/branch/$branchId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login' | '/pricing' | '/success'
-  id: '__root__' | '/' | '/dashboard' | '/login' | '/pricing' | '/success'
+  to:
+    | '/'
+    | '/change-password'
+    | '/dashboard'
+    | '/login'
+    | '/pricing'
+    | '/success'
+    | '/onboarding/setup'
+    | '/onboarding/upload'
+    | '/dashboard/branch/$branchId'
+  id:
+    | '__root__'
+    | '/'
+    | '/change-password'
+    | '/dashboard'
+    | '/login'
+    | '/pricing'
+    | '/success'
+    | '/onboarding/setup'
+    | '/onboarding/upload'
+    | '/dashboard/branch/$branchId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
+  ChangePasswordRoute: typeof ChangePasswordRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   SuccessRoute: typeof SuccessRoute
+  OnboardingSetupRoute: typeof OnboardingSetupRoute
+  OnboardingUploadRoute: typeof OnboardingUploadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -109,6 +176,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/change-password': {
+      id: '/change-password'
+      path: '/change-password'
+      fullPath: '/change-password'
+      preLoaderRoute: typeof ChangePasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -116,15 +190,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding/upload': {
+      id: '/onboarding/upload'
+      path: '/onboarding/upload'
+      fullPath: '/onboarding/upload'
+      preLoaderRoute: typeof OnboardingUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/setup': {
+      id: '/onboarding/setup'
+      path: '/onboarding/setup'
+      fullPath: '/onboarding/setup'
+      preLoaderRoute: typeof OnboardingSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/branch/$branchId': {
+      id: '/dashboard/branch/$branchId'
+      path: '/branch/$branchId'
+      fullPath: '/dashboard/branch/$branchId'
+      preLoaderRoute: typeof DashboardBranchBranchIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardBranchBranchIdRoute: typeof DashboardBranchBranchIdRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardBranchBranchIdRoute: DashboardBranchBranchIdRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
+  ChangePasswordRoute: ChangePasswordRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   SuccessRoute: SuccessRoute,
+  OnboardingSetupRoute: OnboardingSetupRoute,
+  OnboardingUploadRoute: OnboardingUploadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -10,9 +10,9 @@ export function ModeToggle() {
 	};
 
 	return (
-		<Button 
-			variant="ghost" 
-			size="icon" 
+		<Button
+			variant="ghost"
+			size="icon"
 			onClick={toggleTheme}
 			className="rounded-full"
 		>
@@ -21,4 +21,3 @@ export function ModeToggle() {
 		</Button>
 	);
 }
-

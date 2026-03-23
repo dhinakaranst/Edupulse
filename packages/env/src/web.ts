@@ -5,8 +5,10 @@ export const env = createEnv({
 	clientPrefix: "VITE_",
 	client: {
 		VITE_SERVER_URL: z.url(),
-		VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1, "Stripe Publishable Key is required"),
+		VITE_STRIPE_PUBLISHABLE_KEY: z
+			.string()
+			.min(1, "Stripe Publishable Key is required"),
 	},
-	runtimeEnv: (import.meta as any).env,
+	runtimeEnv: (import.meta as unknown as { env: Record<string, string> }).env,
 	emptyStringAsUndefined: true,
 });

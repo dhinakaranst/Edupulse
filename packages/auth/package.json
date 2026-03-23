@@ -15,7 +15,9 @@
 		"@sms/env": "workspace:*",
 		"better-auth": "catalog:",
 		"dotenv": "catalog:",
-		"zod": "catalog:"
+		"zod": "catalog:",
+		"nodemailer": "catalog:",
+		"@types/nodemailer": "catalog:"
 	},
 	"devDependencies": {
 		"@sms/config": "workspace:*",

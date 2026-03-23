@@ -25,7 +25,10 @@
 			"@types/react-dom": "^19.2.3",
 			"tailwindcss": "^4.1.18",
 			"drizzle-orm": "^0.45.1",
-			"@types/pg": "^8.16.0"
+			"@types/pg": "^8.16.0",
+			"stripe": "^17.7.0",
+			"nodemailer": "^6.10.0",
+			"@types/nodemailer": "^6.4.17"
 		}
 	},
 	"type": "module",
@@ -51,7 +54,6 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.2.0",
 		"@sms/config": "workspace:*",
 		"@types/bun": "catalog:",
 		"concurrently": "^9.2.1",
